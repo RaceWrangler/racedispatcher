@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Protos\analyzerMessages.proto" />
+    <None Remove="Protos\directorMessages.proto" />
+    <None Remove="Protos\handlerMessages.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.27.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\analyzerMessages.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\directorMessages.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\handlerMessages.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+</Project>

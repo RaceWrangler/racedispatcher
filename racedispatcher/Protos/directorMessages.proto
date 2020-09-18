@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "racedispatcher.Protos";
+
+import "Protos/analyzerMessages.proto";
+
+service DirectorRegistration {
+	rpc DirectorRegistration (RegisterToRecieveAnalyzerMessages) returns (stream NewLineCrossingEvent);
+}
+
+message RegisterToRecieveAnalyzerMessages {}

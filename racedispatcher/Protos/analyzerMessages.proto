@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "racedispatcher.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "Protos/handlerMessages.proto";
+
+service AnalyzerRegistration {
+	rpc AnalyzerRegistration (RegisterToRecieveHandlerMessages) returns (stream NewImageRequest);
+}
+
+message RegisterToRecieveHandlerMessages {}
+
+message NewLineCrossingEvent {
+	string imgName = 1;
+	google.protobuf.Timestamp timeStamp = 2;
+}
