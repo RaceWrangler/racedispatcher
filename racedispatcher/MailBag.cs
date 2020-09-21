@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using racedispatcher.Protos;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace racedispatcher
 {
     public class MailBag
     {
         static private MailBag singletonMailbag;
-        private Queue<NewImageRequest> analyzerMailbox = new Queue<NewImageRequest>();
-        private Queue<NewLineCrossingEvent> directorMailbox = new Queue<NewLineCrossingEvent>();
+        private BufferBlock<NewImageRequest> analyzerMailbox = new BufferBlock<NewImageRequest>();
+        private BufferBlock<NewLineCrossingEvent> directorMailbox = new BufferBlock<NewLineCrossingEvent>();
         public bool TerminateFlagged = false;
         private MailBag() { }
 
@@ -25,15 +27,21 @@ namespace racedispatcher
             return singletonMailbag;
         }
 
+        internal async Task AddNewImage(NewImageRequest nir)
+        {
+            await analyzerMailbox.SendAsync(nir);
+        }
+
+        internal async Task AddLineCrossing(NewLineCrossingEvent nlce)
+        {
+            await directorMailbox.SendAsync(nlce);
+        }
+
         public async Task AnalyzerMessageLoop(Grpc.Core.IServerStreamWriter<NewImageRequest> responseStream)
         {
             while(!TerminateFlagged)
             {
-                if (analyzerMailbox.Count > 0)
-                {
-                    await responseStream.WriteAsync(analyzerMailbox.Dequeue());
-                }
-                await Task.Delay(10);
+                await responseStream.WriteAsync(await analyzerMailbox.ReceiveAsync());
             }
         }
 
@@ -41,11 +49,7 @@ namespace racedispatcher
         {
             while (!TerminateFlagged)
             {
-                if (directorMailbox.Count > 0)
-                {
-                    await responseStream.WriteAsync(directorMailbox.Dequeue());
-                }
-                await Task.Delay(10);
+                await responseStream.WriteAsync(await directorMailbox.ReceiveAsync());
             }
         }
     }

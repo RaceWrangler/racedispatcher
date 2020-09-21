@@ -7,6 +7,7 @@ import "Protos/handlerMessages.proto";
 
 service AnalyzerRegistration {
 	rpc AnalyzerRegistration (RegisterToRecieveHandlerMessages) returns (stream NewImageRequest);
+	rpc AlertDirectorOfLineCrossing(NewLineCrossingEvent) returns (NewLineCrossingEventResponse);
 }
 
 message RegisterToRecieveHandlerMessages {}
@@ -15,3 +16,5 @@ message NewLineCrossingEvent {
 	string imgName = 1;
 	google.protobuf.Timestamp timeStamp = 2;
 }
+
+message NewLineCrossingEventResponse{}

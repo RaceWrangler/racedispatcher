@@ -32,6 +32,8 @@ namespace racedispatcher
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<HandlerMessageService>();
+                endpoints.MapGrpcService<AnalyzerRegistrationService>();
                 endpoints.MapGrpcService<DirectorRegistrationService>();
 
                 endpoints.MapGet("/", async context =>

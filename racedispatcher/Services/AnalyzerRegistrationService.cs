@@ -1,4 +1,5 @@
-﻿using racedispatcher.Protos;
+﻿using Grpc.Core;
+using racedispatcher.Protos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,13 @@ namespace racedispatcher.Services
             Grpc.Core.ServerCallContext context)
         {
             await MailBag.Get().AnalyzerMessageLoop(responseStream);
+            await Task.Delay(-1);
+        }
+
+        public override async Task<NewLineCrossingEventResponse> AlertDirectorOfLineCrossing(NewLineCrossingEvent nlce, ServerCallContext context)
+        {
+            await MailBag.Get().AddLineCrossing(nlce);
+            return new NewLineCrossingEventResponse();
         }
     }
 }
